@@ -16,7 +16,7 @@ import { Dispatch as RemoveDispatch } from "../../../../store/modules/portfolio/
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-const PortfolioPage = ({ upload: { loading, error }, remove: { delete: deleteSuccess, error: deleteError }, UploadDispatch, RemoveDispatch }) => {
+const PortfolioPage = ({ upload: { loading, error }, remove: { delete: deleteSuccess }, UploadDispatch, RemoveDispatch }) => {
 
     const { data } = useSWR('/parser-status', fetcher, { refreshInterval: 1000 });
     const [portfolio, setPortfolio] = useState([]);
@@ -40,7 +40,7 @@ const PortfolioPage = ({ upload: { loading, error }, remove: { delete: deleteSuc
                 icon: 'error',
                 title: 'Oops...',
                 text: error,
-              })
+            })
         }
     }, [error]);
 
@@ -48,22 +48,18 @@ const PortfolioPage = ({ upload: { loading, error }, remove: { delete: deleteSuc
         if (deleteSuccess) {
             Swal.fire('Deleted!', '', 'success')
         }
-
-        if (deleteError) {
-            Swal.fire(deleteError, '', 'error')
-        }
-    }, [deleteSuccess, deleteError]);
+    }, [deleteSuccess]);
 
     const handleDelete = (id) => {
         Swal.fire({
             title: 'Do you want to remove?',
             showCancelButton: true,
             confirmButtonText: 'Remove',
-          }).then((result) => {
+        }).then((result) => {
             if (result.isConfirmed) {
-              RemoveDispatch(id)
+                RemoveDispatch(id)
             }
-          })
+        })
     }
 
     const handleClick = event => {
@@ -131,5 +127,5 @@ const PortfolioPage = ({ upload: { loading, error }, remove: { delete: deleteSuc
 const mapStateToProps = (state) => {
     return { upload: state.portfolioUpload, remove: state.portfolioDelete }
 };
-  
+
 export default connect(mapStateToProps, { UploadDispatch, RemoveDispatch })(PortfolioPage);
